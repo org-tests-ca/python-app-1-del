@@ -1,0 +1,21 @@
+# Core web framework
+flask==3.0.3
+
+# Prometheus metrics for Flask
+prometheus_flask_exporter==0.23.0
+
+# OpenTelemetry Core
+opentelemetry-api==1.24.0
+opentelemetry-sdk==1.24.0
+
+# OpenTelemetry Exporter (OTLP via HTTP)
+opentelemetry-exporter-otlp==1.24.0
+opentelemetry-exporter-otlp-proto-http==1.24.0
+
+# OpenTelemetry Instrumentations
+opentelemetry-instrumentation==0.45b0
+opentelemetry-instrumentation-flask==0.45b0
+opentelemetry-instrumentation-requests==0.45b0
+
+# Requests (necessário para a instrumentação de requests)
+requests==2.31.0

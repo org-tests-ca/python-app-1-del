@@ -1,0 +1,12 @@
+site_name: 'python-app-1-del'
+site_description: 'Main documentation for the python-app-1-del'
+repo_url: https://github.com/clecioantao/python-app-1-del
+edit_uri: edit/main/docs
+
+plugins:
+  - techdocs-core
+
+# For sidebar navigation on https://backstage.io/, see `microsite/sidebars.json`
+nav:
+  - Overview:
+      - Getting started: 'docs/index.md'

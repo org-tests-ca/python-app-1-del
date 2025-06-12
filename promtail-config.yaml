@@ -1,0 +1,18 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://lab-lgtm-loki-gateway:80/loki/api/v1/push
+
+scrape_configs:
+  - job_name: flask-app
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: flask
+          __path__: /var/log/flask/*.log

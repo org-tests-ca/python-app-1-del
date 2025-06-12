@@ -1,0 +1,11 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: python-app-1-del
+  description: Python app that displays time - named python-app-1-del - envinroment dev
+  annotations:
+    github.com/project-slug: clecioantao/python-app-1-del
+spec:
+  type: service
+  owner: development
+  lifecycle: experimental

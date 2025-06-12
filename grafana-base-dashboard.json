@@ -1,0 +1,226 @@
+{
+  "dashboard": {
+    "id": null,
+    "uid": null,
+    "title": "${DASHBOARD_NAME}",
+    "tags": ["generated"],
+    "timezone": "browser",
+    "schemaVersion": 36,
+    "version": 0,
+    "refresh": "30s",
+    "panels": [
+      {
+        "type": "timeseries",
+        "title": "HTTP Requests por Código de Status",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DATASOURCE_NAME}"
+        },
+        "targets": [
+          {
+            "expr": "rate(flask_http_request_total[10m])",
+            "legendFormat": "{{status}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "reqps"
+          }
+        },
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 }
+      },
+      {
+        "type": "timeseries",
+        "title": "Duração Média das Requisições (s)",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DATASOURCE_NAME}"
+        },
+        "targets": [
+          {
+            "expr": "rate(flask_http_request_duration_seconds_sum[10m]) / clamp_min(rate(flask_http_request_duration_seconds_count[10m]), 1)",
+            "legendFormat": "Média por rota",
+            "refId": "B"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s"
+          }
+        },
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 }
+      },
+      {
+        "type": "timeseries",
+        "title": "Memória em Uso (Bytes)",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DATASOURCE_NAME}"
+        },
+        "targets": [
+          {
+            "expr": "process_resident_memory_bytes",
+            "legendFormat": "Memória",
+            "refId": "C"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "bytes"
+          }
+        },
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 }
+      },
+      {
+        "type": "timeseries",
+        "title": "Uso de CPU (Total em segundos)",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DATASOURCE_NAME}"
+        },
+        "targets": [
+          {
+            "expr": "rate(process_cpu_seconds_total[10m])",
+            "legendFormat": "CPU",
+            "refId": "D"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s"
+          }
+        },
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 }
+      },
+      {
+        "type": "timeseries",
+        "title": "📈 Requisições por segundo (com alerta)",
+        "gridPos": { "x": 0, "y": 16, "w": 24, "h": 8 },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DATASOURCE_NAME}"
+        },
+        "targets": [
+          {
+            "expr": "rate(flask_http_request_total[10m])",
+            "refId": "E"
+          }
+        ],
+        "alert": {
+          "name": "Alerta de Tráfego Alto",
+          "conditions": [
+            {
+              "evaluator": { "type": "gt", "params": [10] },
+              "operator": { "type": "and" },
+              "query": { "params": ["E"] },
+              "reducer": { "type": "avg" },
+              "type": "query"
+            }
+          ],
+          "executionErrorState": "alerting",
+          "for": "1m",
+          "frequency": "1m",
+          "handler": 1,
+          "noDataState": "no_data",
+          "alertRuleTags": {}
+        },
+        "fieldConfig": {
+          "defaults": {
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                { "color": "green", "value": null },
+                { "color": "red", "value": 10 }
+              ]
+            }
+          },
+          "overrides": []
+        }
+      },
+      {
+        "type": "timeseries",
+        "title": "🔥 Erros 5xx por segundo (com alerta)",
+        "gridPos": { "x": 0, "y": 24, "w": 24, "h": 8 },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DATASOURCE_NAME}"
+        },
+        "targets": [
+          {
+            "expr": "rate(flask_http_request_total{status=~\"5..\"}[10m])",
+            "refId": "F"
+          }
+        ],
+        "alert": {
+          "name": "Alerta de Erros 5xx",
+          "conditions": [
+            {
+              "evaluator": { "type": "gt", "params": [0] },
+              "operator": { "type": "and" },
+              "query": { "params": ["F"] },
+              "reducer": { "type": "sum" },
+              "type": "query"
+            }
+          ],
+          "executionErrorState": "alerting",
+          "for": "1m",
+          "frequency": "1m",
+          "handler": 1,
+          "noDataState": "no_data",
+          "alertRuleTags": {}
+        },
+        "fieldConfig": {
+          "defaults": {
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                { "color": "green", "value": null },
+                { "color": "orange", "value": 1 }
+              ]
+            }
+          },
+          "overrides": []
+        }
+      },
+      {
+        "type": "timeseries",
+        "title": "Latência - Percentil 95 (s)",
+        "gridPos": { "x": 0, "y": 32, "w": 24, "h": 8 },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DATASOURCE_NAME}"
+        },
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, sum(rate(flask_http_request_duration_seconds_bucket[10m])) by (le))",
+            "refId": "G"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s"
+          }
+        }
+      },
+      {
+        "type": "timeseries",
+        "title": "Garbage Collector - Coletas por Geração",
+        "gridPos": { "x": 0, "y": 40, "w": 24, "h": 8 },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DATASOURCE_NAME}"
+        },
+        "targets": [
+          {
+            "expr": "rate(python_gc_collections_total[10m])",
+            "legendFormat": "Geração {{generation}}",
+            "refId": "H"
+          }
+        ]
+      }
+    ]
+  },
+  "folderTitle": "${FOLDER_NAME}",
+  "overwrite": true
+}

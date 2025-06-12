@@ -1,0 +1,7 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: python-app-1-del
+    static_configs:
+      - targets: ['flask-app:5000']
